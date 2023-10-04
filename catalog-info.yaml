@@ -1,31 +1,31 @@
-## COMPONENT##
+
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: "backstage-k8s-demo"
-  # namespace: infra
-  description: |
-    Put description here
-  tags:
-    - devops
-    - demo
+  name: Multiple-api-demo 
+  description: BS TEST
   annotations:
-      circleci.com/project-slug: github/backstage-k8s-demo
-      datadoghq.com/dashboard-url: https://p.datadoghq.eu/sb/da2b3548-efcf-11ed-a9f7-da7ad0900005-4c361b81311d9deb7a01600dd4d739b1
-      sonarqube.org/project-key: syngenta-digital/syngenta-digital_api-python-gitops-integrations
-      jira/project-key: DVSRE
-      opsgenie.com/component-selector: 'tag:"team:global-devops"'
-      opsgenie.com/team: ' DevOps Portal Team'
-      sentry.io/project-slug: seed-selector-integration-service
-      backstage.io/techdocs-ref: dir:.
-      github.com/project-slug: syngenta-digital/api-python-gitops-integrations
-      backstage.io/linguist: https://github.com/syngenta-digital/api-python-gitops-integrations
+    github.com/project-slug: org-bs/backstage-k8s-demo
+    circleci.com/project-slug: github/org-bs/backstage-k8s-demo
 spec:
   type: service
   lifecycle: production
-  owner: "group:global-devops"
-  providesApis:
-    - api-python-gitops-integrations
-  consumesApis:
-    - api-python-gitops-integrations-api
+  owner: global-devops
+  system: global-devops
+ 
 
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  title: Multiple-api-demo 
+  name: Multiple-api-demo 
+  description: Multiple-api-demo 
+# annotations:
+#   openapi/ref-basepath: ./
+spec:
+  type: openapi
+  lifecycle: production
+  owner: insights-engine
+  definition:
+    $openapi: ./openapi.yaml

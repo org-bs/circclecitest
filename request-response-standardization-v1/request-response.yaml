@@ -1,0 +1,72 @@
+Computational Agronomy:
+  post:
+      
+      summary: >-
+        Guidelines for designing API request and response.
+      tags:
+        - Computational Agronomy 
+
+      description: |- 
+        ![alt text](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*sDy0bwrO28JsvJLS.jpg)
+        #### The section outlines the rules for standardizing API requests and responses and provides a comprehensive guide for designing and implementing an API with consistency. This document outlines the structure, format, and content of API requests and responses, including expected data types, parameters, and error codes. <br><br>By adhering to these guidelines, the API will benefit from increased interoperability, reliability, and maintainability, making it more user-friendly for developers and easier to integrate with. The document serves as an essential reference for documenting the API, testing its functionality, and resolving any potential issues.<br><br>
+        ### For more details please visit : <a href=https://digitial-product-engineering.atlassian.net/wiki/spaces/CIE/pages/2722431554/IE+API+Attribute+Hub target=blank>API Attribute Hub</a>
+    
+      requestBody:
+        description: |-
+         ### Request Schema
+        content:
+          application/json:
+            schema:
+              $ref: 'request_schemas.yaml#/Requestv1.2'
+        required: true
+      responses:
+        '200':
+          description: successful operation (The displayed response is just for 7 days for sample purpose).
+          content:
+            application/json:
+              schema:
+                $ref: 'request_schemas.yaml#/Responsev1.1'
+
+        '400':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: 'request_schemas.yaml#/Error400'
+
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: 'request_schemas.yaml#/Error401'
+
+        '403':
+          description: Forbidden error
+          content:
+            application/json:
+              schema:
+                $ref: 'request_schemas.yaml#/Error403'
+
+        '404':
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                $ref: 'request_schemas.yaml#/Error404'
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: 'request_schemas.yaml#/Error500'
+
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: 'request_schemas.yaml#/Error502'
+
+      x-codegen-request-body-name: body
