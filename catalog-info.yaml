@@ -7,6 +7,13 @@ metadata:
   annotations:
     github.com/project-slug: org-bs/backstage-k8s-demo
     circleci.com/project-slug: github/org-bs/backstage-k8s-demo
+    sonarqube.org/project-key: org-bs/test
+    jira/project-key: test
+    sentry.io/project-slug: test
+    datadoghq.com/dashboard-url: "https://example.com"
+    backstage.io/techdocs-ref: dir:.
+    opsgenie.com/team: test-team
+
 spec:
   type: service
   lifecycle: production
