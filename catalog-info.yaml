@@ -19,13 +19,16 @@ spec:
   lifecycle: production
   owner: global-devops
   system: global-devops
+  providesApis:
+     - Multiple-api-demo
+     - Multiple-api-demo-2
  
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  title: Multiple-api-demo 
+  title: Multiple-api-dem-title 
   name: Multiple-api-demo 
   description: Multiple-api-demo 
 # annotations:
@@ -42,7 +45,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  title: Multiple-api-demo-2 
+  title: Multiple-api-demo-2-title
   name: Multiple-api-demo-2
   description: Multiple-api-demo-2
 # annotations:
