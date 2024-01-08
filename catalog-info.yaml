@@ -36,3 +36,20 @@ spec:
   owner: insights-engine
   definition:
     $openapi: ./openapi.yaml
+
+
+--- 
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  title: Multiple-api-demo-2 
+  name: Multiple-api-demo-2
+  description: Multiple-api-demo-2
+# annotations:
+#   openapi/ref-basepath: ./
+spec:
+  type: openapi
+  lifecycle: production
+  owner: insights-engine
+  definition:
+    $openapi: ./openapi-2.yaml
