@@ -6,7 +6,7 @@ metadata:
   description: BS TEST
   annotations:
     github.com/project-slug: org-bs/backstage-k8s-demo
-    circleci.com/project-slug: github/org-bs/backstage-k8s-demo
+    circleci.com/project-slug: github/org-bs/circclecitest
     sonarqube.org/project-key: org-bs/test
     jira/project-key: test
     sentry.io/project-slug: test
