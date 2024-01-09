@@ -5,7 +5,7 @@ metadata:
   name: Multiple-api-demo 
   description: BS TEST
   annotations:
-    github.com/project-slug: org-bs/backstage-k8s-demo
+    github.com/project-slug: org-bs/circclecitest
     circleci.com/project-slug: github/org-bs/circclecitest
     sonarqube.org/project-key: org-bs/test
     jira/project-key: test
