@@ -1,0 +1,1905 @@
+Requestv1.2:
+  type: object
+  required:
+    - fields
+  properties:
+    request_version:
+      type: string
+      default: v1.0
+      description: |-
+        version number of standardize request structure/template <br>
+          ```
+          {
+            "request_version": "v1.0"
+          }
+          ```
+    fields:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: |-
+              unique id of each field <br>
+              <b>Syntax</b> - "cwp:application::field:mainEntity:subEntity:value" <br>
+                ```
+                {
+                  "id": "cwp:base::field:id:2ee9a2deac13e1097ee6dabb67903e5f"
+                }
+                ```
+
+          models:
+            description: |-
+              Models to be executed.
+            items:
+              required:
+                - name
+                - version
+              properties:
+                name:
+                  type: string
+                  description: |-
+                    name of the model to be executed.<br>
+                    example - "name": "dssat"
+
+                version:
+                  type: string
+                  description: |-
+                    version of the model to be executed.<br>
+                    example - "version": "v1.0"
+
+                metadata:
+                  description: |-
+                    metadata must be in key value format.<br>
+                    example - 
+                            "metadata":{
+                              "business_rule_country_code": "FR"
+                            }
+
+                models:
+                  type: array
+                  description: Submodels
+                  items:
+                    required:
+                      - name
+                      - version
+                    properties:
+                      name:
+                        type: string
+                        description: |-
+                          name of the submodel to be executed.<br>
+                          example - "name": "cgc"
+
+                      version:
+                        type: string
+                        description: |-
+                          version of the submodel to be executed.<br>
+                          example - "version": "v1.0"
+
+          query:
+            type: object
+            properties:
+              offset:
+                type: integer
+                description: |-
+                  specify the desired starting point in the model response data set.
+              limit:
+                type: integer
+                description: |-
+                  refers to the maximum number of model result items that should be returned for a particular page of data.
+              filter:
+                type: string
+                description: |-
+                  filter on model response <br><br>
+                  <b>Syntax</b> - feature_category:feature_type
+                    examples: 
+                      -[potential_yield_loss, phenological_growth_stage:leaf_count]
+              sort:
+                type: string
+                description: |-
+                  for sorting models response in ascending (asc) or descending (desc) order <br><br>
+                  <b>Syntax</b> - feature_category:feature:asc feature_category:feature:desc
+                  examples: 
+                    -[phenological_growth_stage:feature_type:leaf_count:value:asc
+                      ,phenological_growth_stage:feature_type:growth_stage:value:desc]
+              transformers:
+                type: array
+                items:
+                  type: string
+                description: |-
+                  transformation to be applied before and after model execution. <br>
+                  <b>Syntax</b> - <br>
+                    cwp:ins:transformer::pre:nameoftransformation:version<br>
+                    cwp:ins:transformer::post:nameoftransformation:version <br><br>
+                  - <b>cwp:ins:transformer::post:growth_stage_prediction:v1 :</b> this 
+                  aggregation returns predicted start date for each growth stage and other key attributes
+
+          location:
+            description: GeoJSON Geometry
+            externalDocs:
+              url: https://geojson.org/geojson-spec.html
+            required:
+              - type
+              - geometry
+            properties:
+              type:
+                type: string
+                enum:
+                  - Feature
+                description: |-
+                  The geographic objects of API use the GeoJSON (RFC 7946) format. The regions and fields can be represented as GeoJSON Features with a specific property schema.<br>
+                  example: Feature
+                externalDocs:
+                  url: https://geojson.org/geojson-spec.html#feature-objects
+
+              geometry:
+                required:
+                  - type
+                  - coordinates
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - Point
+                      - Multipoint
+                    description: |-
+                      A GeoJSON geometry object of any type other than "GeometryCollection" must have a member with the name "coordinates". The value of the coordinates member is always an array. The structure for the elements in this array is determined by the type of geometry.<br>
+                      The geographic objects of API use the GeoJSON (RFC 7946) format. The regions and fields can be represented as GeoJSON Features with a specific property schema.<br>
+                      example: Point
+                    externalDocs:
+                      url: https://geojson.org/geojson-spec.html#geometry-objects
+
+                  coordinates:
+                    type: array
+                    minItems: 2
+                    maxItems: 2
+                    description: |-
+                      In geometry, coordinates should be in sequence.<br>
+                      First place is for longitude and second place is for latitude.<br>
+                    items:
+                      type: number
+                      format: double
+                    example:
+                      - -95.753314
+                      - 38.492798
+
+              properties:
+                type: object
+                properties:
+                  grid_id:
+                    type: string
+                    description: |-
+                      Map grid id used to specific fetch geographical data <br>
+                      example - "grid_id": 49285035
+                  country_code:
+                    type: string
+                    description: |-
+                      two-letter or three-letter code that is used to represent a specific country or geographical region.<br><br>
+                      example -  "country_code": "FR"
+                  landscape:
+                    description: |-
+                      Specific landscape features  <br>
+                       example - 
+                       ```
+                         "landscape": {
+                                   "woodland": {
+                                     "value": 0.621512,
+                                     "unit": "percentage"
+                                   },
+                                   "grassland": {
+                                     "value": 0.759528,
+                                     "unit": "percentage"
+                                   }
+                                 }
+                       ```
+                    required:
+                      - woodland
+                      - grassland
+                    properties:
+                      woodland:
+                        type: object
+                        description: |-
+                          Percentage of woodland area. <br><br>
+                        properties:
+                          value:
+                            description: |-
+                              Value should be greater than or equal to 0 but less than or equal to 100.<br><br>
+                            type: number
+                          unit:
+                            description: Unit of the value above. Default "percentage"
+                            type: string
+                      grassland:
+                        type: object
+                        description: |-
+                          Percentage of grassland area. <br><br>
+                        properties:
+                          value:
+                            description: |-
+                              Value should be greater than or equal to 0 but less than or equal to 100.<br><br>
+                            type: number
+                          unit:
+                            description: |-
+                              Unit of the value above. Default "percentage"
+                            type: string
+                  distance_to_grid:
+                    description: |-
+                      Radius distance from grid that is accepted to fetch specific geographical data  <br><br>
+                    type: object
+                    required:
+                      - value
+                      - unit
+                    properties:
+                      value:
+                        type: integer
+                        description: |-
+                          example - 5Km
+                      unit:
+                        type: string
+                        description:
+                          example- Km
+
+          crop:
+            type: string
+            enum:
+              - WINTER_WHEAT
+              - WINTER_BARLEY
+              - WINTER_RYE
+              - TRITICALE
+            description: |-
+              crop name should be in upper case, and if there is a space between two words, replace it with underscore.<br>
+              case sensitive.
+
+          crop_variety:
+            type: object
+            description: |-
+              crop variety attributes (synonyms: cultivar, hybrid)
+            properties:
+              name:
+                type: string
+                description: |-
+                  crop variety name.
+                  example - "IZALCO CS"
+              relative_maturity:
+                type: string
+                description: |-
+                  The relative maturity is an indication of the crop cycle, example - early, medium, long, etc.
+              traits:
+                type: array
+                description: |-
+                  Input of variety traits.<br>
+                   ```
+                        {
+                         "traits": [
+                          {
+                              "category": "agronomic",
+                              "type": "disease_resistance",
+                              "disease_code": "PSDCHA",
+                              "value": 3
+                          }
+                        ]
+                      }
+                    ```
+                items:
+                  properties:
+                    category:
+                      type: string
+                      enum:
+                        - agronomic
+                        - genetic
+                      description: |-
+                        category can be "agronomic" or "genetic".
+
+                    type:
+                      type: string
+                      example: 'disease_resistance'
+                      description: |-
+                        - DISEASE RESISTANCE: 1- variety is very sensitive to disease / 9- variety is highly resistant to disease
+                        - FLOWERING EARLINESS: 4- very late flowering / 9- very early flowering
+                        - ELONGATION EARLINESS: refer to BBCH 30, 0- verly late elongation / 6- very early elongation 
+                        - VERNALIZATION INDEX: 1- induction requires long exposure to cold temperature / 9- no temperature requirements for induction 
+                        - CROP HEIGHT: 1- very short compared to standard / 9- very tall compared to standard
+                        - etc. <br>
+
+                    disease_code:
+                      type: string
+                      enum:
+                        - SEPTTR
+                        - PSDCHA
+                      description: |-
+                        EPPO code for disease.<br>
+                        Should be in upper case, and if there is a space between two words, replace it with underscore.<br>
+                        case sensitive.
+
+                    attributes:
+                      type: object
+                      description: |-
+                        Attributes of traits, must be in key value format.<br>
+                      required:
+                        - key
+                        - value
+                      properties:
+                        key:
+                          type: string
+                        value:
+                          anyOf:
+                            - type: boolean
+                            - type: number
+                            - type: string
+                            - type: object
+                            - type: array
+                              items: { }
+
+                    value:
+                      type: number
+
+          planting:
+            description: |-
+              crop planting data (synonyms: sowing, drilling)
+            required:
+              - date
+            properties:
+              date:
+                title: string with date format.
+                externalDocs:
+                  url: https://tools.ietf.org/html/rfc3339#section-5.6
+                type: string
+                format: date
+                x-tags:
+                  - Commons
+                description: |-
+                  Date on which the crop was planted. <br>
+                  Full-date notation as defined by RFC 3339, section 5.6 <br>
+                  example: '2023-02-07T10:41:24Z'
+              depth:
+                type: object
+                description: |-
+                  distance between the seed or planting material and the soil surface.
+                required:
+                  - value
+                  - unit
+                properties:
+                  value:
+                    type: number
+                    format: double
+                    description: |-
+                      Example - Planting depth, for corn [1,9] cm, for soybeans [1, 7], for wheat [1, 6] cm, for barley [1, 6] cm, for sunflower [1,9] cm,etc.
+                  unit:
+                    type: string
+                    description: example - cm
+              density:
+                type: object
+                description: number of plants per unit area unit.
+                required:
+                  - value
+                  - unit
+                properties:
+                  value:
+                    type:
+                      - number
+                      - string
+                    format: double
+                    description: |-
+                      The values accepted by this variable are numbers or string, depending on the country.<br>
+                      Example - [None, Low, Medium, High] or Planting density, for corn number of plants/m2 [4, 14], for soybean [15, 60], for wheat [57, 512], etc.
+                  unit:
+                    type: string
+                    description: example - plants/m2
+              row_spacing:
+                type: object
+                description: |-
+                  Space between two planted rows.
+                required:
+                  - value
+                  - unit
+                properties:
+                  value:
+                    type: number
+                    format: double
+                    description: |-
+                      Example - Row spacing, for corn [20,100] cm, for soybeans [20, 100] cm, for wheat [12, 50] cm, etc.
+                  unit:
+                    type: string
+                    description: example - cm
+              field_water_capacity:
+                description: |-
+                  field water capacity at planting time
+                required:
+                  - value
+                  - unit
+                properties:
+                  value:
+                    type: integer
+                  unit:
+                    type: string
+
+          water_supply:
+            description: |-
+              field irrigation data.
+            properties:
+              is_irrigated:
+                type: boolean
+                description: |-
+                  <b>true</b>: irrigated<br>
+                  <b>false</b>: rainfeed <br>
+                  Default - true
+              irrigation:
+                description: |-
+                  Log of irrigation dates and water volume supplied.
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    date:
+                      title: string with date format.
+                      externalDocs:
+                        url: https://tools.ietf.org/html/rfc3339#section-5.6
+                      type: string
+                      format: date
+                      x-tags:
+                        - Commons
+                      example: '2023-02-07T10:41:24Z'
+                      description: |-
+                        Date of irrigation.<br>
+                        Full-date notation as defined by RFC 3339, section 5.6, <br>
+                        example: '2023-02-07T10:41:24Z'
+                    volume:
+                      type: object
+                      properties:
+                        value:
+                          type: integer
+                          description: example- 10
+                        unit:
+                          type: string
+                          description: example- "mm"
+                      required:
+                        - value
+                        - unit
+
+          soil:
+            description: soil attributes
+            required:
+              - texture
+            properties:
+              texture:
+                type: string
+                enum:
+                  - Sandy clay
+                  - Clay
+                  - Silty clay
+                  - Clay loam
+                  - Silty clay loam
+                  - Sandy Loam
+                  - Sandy clay loam
+                  - Loam
+                  - Silt loam
+                  - Silt
+                  - Loamy sand
+                  - Sand
+
+                description: |-
+                  Soil texture category as per FAO/USDA soil taxonomy based on silt, clay and sand proportions. <br>
+
+              organic:
+                description: |-
+                  attributes related to soil organic matter (synonym: limestone)
+
+              water_table:
+                type: object
+                description: |-
+                  refers to the level at which the ground is saturated with water
+
+              calcareous:
+                description: |-
+                  attributes related to calcareous soil (synonym: limestone)
+
+              practice:
+                practice:
+                type: string
+                example: 'NO-TILL'
+                enum:
+                  - TILL
+                  - NO-TILL
+                description: |-
+                  Soil tillage practices carried out on the field prior to planting <br>
+                  Synonyms: plowing, ploughing <br>
+                  Currently supported: 
+                  - TILL: includes any tillage practice carried on the field, even if shallow <br>
+                  - NO-TILL: if no tillage at all and direct seeding
+
+              nitrogen:
+                type: object
+                description: |-
+                  Amount of nitrogen fertilizer amended to the field. <br>
+                properties:
+                  supply_index:
+                    type: integer
+                    description: |-
+                      An indicator of the soils capacity to supply Nitrogen to a crop in the absence of applied fertilizers.<br>
+
+                  value:
+                    type:
+                      - integer
+                      - string
+                    description: |-
+                      Amount of nitrogen fertilizer amended to the field.<br>
+                      The values accepted by this variable are numbers or string, depending on the country.<br>
+                      example- any number or [None, Low, Medium, High]
+                  unit:
+                    type: string
+                    description: example- 'kg/ha'
+                required:
+                  - value
+                  - unit
+
+          season:
+            type: string
+            enum:
+              - PRE_SEASON
+              - IN_SEASON
+              - POST_SEASON
+            example: PRE_SEASON
+            description: |-
+              Whether outputs are required for pre, post or in-season usage <br>
+
+          time_period:
+            required:
+              - forecast
+            properties:
+              forecast:
+                description: |-
+                  forecast period is the span of time for which prediction is request.
+                properties:
+                  start_date:
+                    title: String with a date format
+                    externalDocs:
+                      url: https://tools.ietf.org/html/rfc3339#section-5.6
+                    type: string
+                    format: date
+                    x-tags:
+                      - Commons
+                    description: |-
+                      Full-date notation as defined by RFC 3339, section 5.6, <br>
+                      example: '2022-02-01T10:41:24Z'
+                  end_date:
+                    title: String with a date format
+                    externalDocs:
+                      url: https://tools.ietf.org/html/rfc3339#section-5.6
+                    type: string
+                    format: date
+                    x-tags:
+                      - Commons
+                    description: |-
+                      Full-date notation as defined by RFC 3339, section 5.6, <br>
+                      example: '2023-02-07T10:41:24Z'
+              historical:
+                description: |-
+                  time frame used to review past data or events to make future predictions.
+                properties:
+                  start_date:
+                    title: String with a date format
+                    externalDocs:
+                      url: https://tools.ietf.org/html/rfc3339#section-5.6
+                    type: string
+                    format: date
+                    x-tags:
+                      - Commons
+                    description: |-
+                      Full-date notation as defined by RFC 3339, section 5.6, <br>
+                      example: '2022-02-07T10:41:24Z'
+                  end_date:
+                    title: String with a date format
+                    externalDocs:
+                      url: https://tools.ietf.org/html/rfc3339#section-5.6
+                    type: string
+                    format: date
+                    x-tags:
+                      - Commons
+                    description: |-
+                      Full-date notation as defined by RFC 3339, section 5.6, <br>
+                      example: '2022-12-07T10:41:24Z'
+
+          observations:
+            type: array
+            items:
+              properties:
+                date:
+                  title: string with date format.
+                  externalDocs:
+                    url: https://tools.ietf.org/html/rfc3339#section-5.6
+                  type: string
+                  format: date
+                  x-tags:
+                    - Commons
+                  description: |-
+                    date on which observations was recorded.<br>
+                    Full-date notation as defined by RFC 3339, section 5.6, <br>
+                    example: '2023-02-07T10:41:24Z'
+                category:
+                  type: string
+                  enum:
+                    - crop_history
+                    - yield_potential
+                    - bbch_stages
+                    - disease_occurrence
+                    - weed_species
+                attributes:
+                  type: object
+                  description: |-
+                    Attributes of observation category, must be in key value format.
+                  required:
+                    - key
+                    - value
+                  properties:
+                    key:
+                      type: string
+                    value:
+                      anyOf:
+                        - type: boolean
+                        - type: number
+                        - type: string
+                        - type: object
+                        - type: array
+                          items: { }
+            description: |-
+              observations in the field during previous or current season. <br>
+              Providing this input will improve reliability of outputs. <br>
+              **Sample Observations**
+                ```
+                 {
+                      "category": "crop_history",
+                      "values": [
+                          {
+                              "harvest_date": "2019-01-01T00:00:00Z",
+                              "crops": [
+                                  "OTHERS"
+                              ]
+                          },
+                          {
+                              "harvest_date": "2020-01-01T00:00:00Z",
+                              "crops": [
+                                  "OILSEED_RAPE"
+                              ]
+                          }
+                      ]
+                  }
+                ```
+                ```
+                 {
+                      "category": "yield_potential",
+                      "yield_potential": {
+                          "value": "55",
+                          "unit": "q/ha"
+                      }
+                  }
+                ```
+                ```
+                 {
+                      "category": "bbch_stages",
+                      "values": [
+                          {
+                              "date": "2021-10-27T00:00:00Z",
+                              "bbch": 9
+                          },
+                          {
+                              "date": "2022-05-06T00:00:00Z",
+                              "bbch": 37
+                          }
+                      ]
+                  }
+                ```
+                ```
+                 {
+                      "category": "disease_occurrence",
+                      "values": [
+                          {
+                              "season": "PREVIOUS",
+                              "crop": "WINTER_WHEAT",
+                              "disease_code": "PSDCHA",
+                              "value": 1
+                          },
+                          {
+                              "season": "CURRENT",
+                              "crop": "WINTER_WHEAT",
+                              "disease_code": "SEPTTR",
+                              "value": 1
+                          }
+                      ]
+                  }
+                ```
+                ```
+                 {
+                      "category": "weed_species",
+                      "values": [
+                                  {
+                                      "name": "crucifers",
+                                      "sizes": [
+                                                  {
+                                                  "value": 10.0,
+                                                  "unit": "cm"
+                                                  },
+                                                  {
+                                                  "value": 2.5,
+                                                  "unit": "cm"
+                                                  }
+                                               ]
+                                  }
+                               ]
+                  }
+                ```
+
+          applications:
+            description: Product application details
+            required:
+              - date
+            properties:
+              date:
+                title: string with date format.
+                externalDocs:
+                  url: https://tools.ietf.org/html/rfc3339#section-5.6
+                type: string
+                format: date
+                x-tags:
+                  - Commons
+                description: |-
+                  Date on which spraying will occur. <br>
+                  Full-date notation as defined by RFC 3339, section 5.6, <br>
+                  example: '2023-02-07T10:41:24Z'
+              sequence:
+                description: |-
+                  sequence of applications.<br>
+                  example - "sequence": 1
+                type: integer
+              products:
+                description: |-
+                  List of products applied.
+                type: array
+                items:
+                  required:
+                    - name
+                  properties:
+                    name:
+                      description: |-
+                        Name of product.
+                      type: string
+                    rate_of_use:
+                      type: object
+                      description: |-
+                        Product rate applied.
+                      properties:
+                        value:
+                          type: integer
+                          description: example - 1
+                        unit:
+                          type: string
+                          description: example - "L/ha"
+                      required:
+                        - value
+                        - unit
+                    diseases:
+                      type: array
+                      items:
+                        properties:
+                          name:
+                            type: string
+                            description: |-
+                              name of disease.<br>
+
+                          is_effective:
+                            type: boolean
+                            description: |-
+                              <b>true<b><br>
+                              <b>false<b>
+                          code:
+                            type: string
+                            enum:
+                              - PSDCHA
+                              - ERYSGR
+                              - GIBBZE
+                            description: It should be in upper case, and if there is a space between two words, replace it with underscore.
+                    code:
+                      type: string
+                      description: It should be in upper case, and if there is a space between two words, replace it with underscore.
+              attributes:
+                type: object
+                description: |-
+                  Attributes of applications category,must be in key value format.
+                required:
+                  - key
+                  - value
+                properties:
+                  key:
+                    type: string
+                  value:
+                    anyOf:
+                      - type: boolean
+                      - type: number
+                      - type: string
+                      - type: object
+                      - type: array
+                        items: { }
+
+          attributes:
+            type: object
+            description: |-
+              Attributes of fields, must be in key value format.
+            required:
+              - key
+              - value
+            properties:
+              key:
+                type: string
+              value:
+                anyOf:
+                  - type: boolean
+                  - type: number
+                  - type: string
+                  - type: object
+                  - type: array
+                    items: { }
+
+  example:
+    {
+      "request_version": "v1.0",
+      "fields": [
+        {
+          "models": [
+            {
+              "name": "avizio",
+              "version": "v1.0",
+              "metadata": {
+                "business_rule_country_code": "FR"
+              }
+            }
+          ],
+          "location": {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -1.4613893212,
+                46.8803683485
+              ]
+            }
+          },
+          "crop": "WINTER_WHEAT",
+          "crop_variety": {
+            "name": "IZALCO CS",
+            "traits": [
+              {
+                "category": "agronomic",
+                "type": "disease_resistance",
+                "disease_code": "PSDCHA",
+                "value": 3
+              },
+              {
+                "category": "agronomic",
+                "type": "vernalization",
+                "value": 3
+              },
+              {
+                "category": "agronomic",
+                "type": "elongation_earlyness",
+                "value": 5
+              },
+              {
+                "category": "agronomic",
+                "type": "flowering_earlyness",
+                "value": 8
+              },
+              {
+                "category": "agronomic",
+                "type": "height",
+                "value": 4.5
+              },
+              {
+                "category": "agronomic",
+                "type": "eyespot_gene",
+                "value": 3
+              }
+            ]
+          },
+          "planting": {
+            "date": "2021-10-21T00:00:00Z"
+          },
+          "water_supply": {
+            "irrigation": [
+              {
+                "date": "2020-03-29T00:00:00Z",
+                "volume": {
+                  "value": 10,
+                  "unit": "mm"
+                }
+              },
+              {
+                "date": "2020-03-12T00:00:00Z",
+                "volume": {
+                  "value": 100,
+                  "unit": "mm"
+                }
+              }
+            ]
+          },
+          "soil": {
+            "practice": "TILL",
+            "texture": "CLAY_LOAM",
+            "nitrogen": {
+              "value": 120,
+              "unit": "kg/ha"
+            },
+            "calcareous": false,
+            "organic": false
+          },
+          "observations": [
+            {
+              "category": "crop_history",
+              "values": [
+                {
+                  "harvest_date": "2019-01-01T00:00:00Z",
+                  "crops": [
+                    "OTHERS"
+                  ]
+                },
+                {
+                  "harvest_date": "2020-01-01T00:00:00Z",
+                  "crops": [
+                    "OILSEED RAPE"
+                  ]
+                }
+              ]
+            },
+            {
+              "category": "yield_potential",
+              "yield_potential": {
+                "value": 55,
+                "unit": "q/ha"
+              }
+            },
+            {
+              "category": "bbch_stages",
+              "values": [
+                {
+                  "date": "2021-10-27T00:00:00Z",
+                  "bbch": 9
+                },
+                {
+                  "date": "2022-05-06T00:00:00Z",
+                  "bbch": 37
+                }
+              ]
+            },
+            {
+              "category": "disease_occurrence",
+              "values": [
+                {
+                  "season": "PREVIOUS",
+                  "crop": "WINTER_WHEAT",
+                  "value": 1,
+                  "disease_code": "PSDCHA"
+
+                },
+                {
+                  "season": "CURRENT",
+                  "crop": "WINTER_WHEAT",
+                  "value": 1,
+                  "disease_code": "SEPTTR"
+
+                }
+              ]
+            }
+          ],
+          "applications": [
+            {
+              "sequence": 1,
+              "date": "2022-03-28T00:00:00Z",
+              "products": [
+                {
+                  "name": "PRO PLEX 450",
+                  "rate_of_use": {
+                    "value": 1,
+                    "unit": "L/ha"
+                  },
+                  "diseases": [
+                    {
+                      "code": "PSDCHA",
+                      "is_effective": true
+                    },
+                    {
+                      "code": "ERYSGR",
+                      "is_effective": false
+
+                    },
+                    {
+                      "code": "GIBBZE",
+                      "is_effective": false
+                    }
+                  ]
+                },
+                {
+                  "name": "VACCIPLANT GRANDES CULTURES (à partir du 17/07/2020)",
+                  "rate_of_use": {
+                    "value": 0.5,
+                    "unit": "L/ha"
+                  },
+                  "diseases": [
+                    {
+                      "code": "PSDCHA",
+                      "is_effective": false
+                    },
+                    {
+                      "code": "ERYSGR",
+                      "is_effective": false
+                    },
+                    {
+                      "code": "GIBBZE",
+                      "is_effective": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "sequence": 2,
+              "date": "2022-04-11T00:00:00Z",
+              "products": [
+                {
+                  "name": "FANDANGO S (À PARTIR DU 02/09/2019)",
+                  "rate_of_use": {
+                    "value": 1.3,
+                    "unit": "L/ha"
+                  },
+                  "diseases": [
+                    {
+                      "code": "PSDCHA",
+                      "is_effective": true
+                    },
+                    {
+                      "code": "ERYSGR",
+                      "is_effective": true
+                    },
+                    {
+                      "code": "GIBBZE",
+                      "is_effective": false
+                    }
+                  ]
+
+                }
+              ]
+            },
+            {
+              "sequence": 3,
+              "date": "2022-04-26T00:00:00Z",
+              "products": [
+                {
+                  "name": "ELATUS ERA",
+                  "rate_of_use": {
+                    "value": 0.75,
+                    "unit": "L/ha"
+                  },
+                  "diseases": [
+                    {
+                      "code": "PSDCHA",
+                      "is_effective": false
+                    },
+                    {
+                      "code": "ERYSGR",
+                      "is_effective": false
+                    },
+                    {
+                      "code": "GIBBZE",
+                      "is_effective": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+
+Responsev1.1:
+  type: object
+  required:
+    - results
+  properties:
+    response_version:
+      type: string
+      description: |-
+        version number of response structure/template <br>
+        example - "response_version": "v1.0"
+    results:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: |-
+              id from request <br>
+
+          location:
+            description: GeoJSON Geometry
+            externalDocs:
+              url: https://geojson.org/geojson-spec.html
+            required:
+              - type
+              - geometry
+            properties:
+              type:
+                type: string
+                enum:
+                  - Feature
+                description: |-
+                  The geographic objects of API use the GeoJSON (RFC 7946) format. The regions and fields can be represented as GeoJSON Features with a specific property schema.<br>
+                  example: Feature
+                externalDocs:
+                  url: https://geojson.org/geojson-spec.html#feature-objects
+
+              geometry:
+                required:
+                  - type
+                  - coordinates
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - Point
+                      - Multipoint
+                    description: |-
+                      A GeoJSON geometry object of any type other than "GeometryCollection" must have a member with the name "coordinates". The value of the coordinates member is always an array. The structure for the elements in this array is determined by the type of geometry.<br>
+                      The geographic objects of API use the GeoJSON (RFC 7946) format. The regions and fields can be represented as GeoJSON Features with a specific property schema.<br>
+                      example: Point
+                    externalDocs:
+                      url: https://geojson.org/geojson-spec.html#geometry-objects
+                  coordinates:
+                    type: array
+                    minItems: 2
+                    maxItems: 2
+                    description: |-
+                      In geometry, coordinates should be in sequence.<br>
+                      First place is for longitude and second place is for latitude.<br>
+                    items:
+                      type: number
+                      format: double
+                    example:
+                      - -95.753314
+                      - 38.492798
+              properties:
+                type: object
+                properties:
+                  grid_id:
+                    type: string
+                    description: |-
+                      A temporary input to associate to a field location ( to help model output validation)<br><br>
+                      example - "grid_id": 49285035
+                  country_code:
+                    type: string
+                    description: |-
+                      two-letter or three-letter code that is used to represent a specific country or geographical region.<br><br>
+                      example -  "country_code": "FR"
+                  landscape:
+                    description: |-
+                      A landscape is the visible features of an area of land <br>
+                      example - 
+                      ```
+                        "landscape": {
+                                  "woodland": {
+                                    "value": 0.621512,
+                                    "unit": "percentage"
+                                  },
+                                  "grassland": {
+                                    "value": 0.759528,
+                                    "unit": "percentage"
+                                  }
+                                }
+                      ```
+                    required:
+                      - woodland
+                      - grassland
+                    properties:
+                      woodland:
+                        type: object
+                        description: |-
+                          Percentage of woodland area. <br><br>
+                        properties:
+                          value:
+                            description: |-
+                              Value should be greater than or equal to 0 but less than or equal to 100.<br><br>
+                            type: float
+                          unit:
+                            description: Unit of the value above. Default "percentage"
+                            type: string
+                      grassland:
+                        type: object
+                        description: |-
+                          Percentage of grassland area. <br><br>
+                        properties:
+                          value:
+                            description: |-
+                              Value should be greater than or equal to 0 but less than or equal to 100.<br><br>
+                            type: float
+                          unit:
+                            description: |-
+                              Unit of the value above. Default "percentage"
+                            type: string
+                  distance_to_grid:
+                    description: |-
+                      This is the distance radius to get the data points available for
+                      the specified user geo co-ordinates. <br><br>
+                    type: object
+                    required:
+                      - value
+                      - unit
+                    properties:
+                      value:
+                        type: int
+                        description: |-
+                          example - 5Km
+                      unit:
+                        type: string
+                        description:
+                          example- Km
+
+          metadata:
+            type: object
+            description: |-
+              example: 
+               ```
+                 "metadata": {
+                       "type": "mathematical",
+                       "models": [
+                           {
+                               "name": "avizio",
+                               "version": "v1.2"
+                           }
+                       ],
+                       "result_time": 12345
+                   }
+               ```
+            properties:
+              type:
+                type: string
+                description: |-
+                  example: algorithm, mathematical, etc.
+              models:
+                description: |-
+                  Executed model <br>
+                   example: 
+                    ```
+                      "models": [
+                          {
+                              "name": "DSSAT",
+                              "version": "v1.2",
+                              "models": [
+                                  {
+                                      "name": "CGC",
+                                      "version": "v1.0"
+                                  }
+                              ]
+                          }
+                      ]
+                    ```
+                items:
+                  required:
+                    - name
+                    - version
+                  properties:
+                    name:
+                      type: string
+                      description: name of the model.
+                    version:
+                      type: string
+                      description: version of the model.
+                    models:
+                      description: Submodels
+                      type: array
+                      items:
+                        required:
+                          - name
+                          - version
+                        properties:
+                          name:
+                            type: string
+                            description: name of the Submodel.
+                          version:
+                            type: string
+                            description: version of the Submodel.
+              packages:
+                type: array
+                description: |-
+                  list of packages (Model specific) <br>
+                   example: 
+                    ```
+                      "packages": [
+                              {
+                              "name": "cloud_segmentation",
+                              "version": "1.0.5"
+                              }
+                        ]
+                    ```
+                items:
+                  required:
+                    - name
+                    - version
+                  properties:
+                    name:
+                      type: string
+                      description: name of the package.
+                    version:
+                      type: string
+                      description: version of the package.
+              result_time:
+                type: integer
+                description: |-
+                  epoch time
+                  example: 1675248283
+              attributes:
+                type: object
+                description: |-
+                  Attributes of prediction, must be in key value format.
+                properties:
+                  key:
+                    type: string
+                  value:
+                    type: any
+
+          page:
+            description: Pagination is a process whereby a huge data set is distributed into several sub-category pages.
+            required:
+              - offset
+              - count
+            properties:
+              offset:
+                type: integer
+                description: specify the desired starting point in the model response data set.
+              count:
+                type: integer
+                description: Number of items on the current page.
+
+          predictions:
+            type: array
+            items:
+              type: object
+              properties:
+                feature_category:
+                  type: String
+                  description: |-
+                    Related model outputs should be grouped into feature_categories relevant to specific use cases. <br>
+                    Example: Daily disease risk, Historical statistics, Absolute predictions, Relative predictions
+                prediction_window:
+                  description: |-
+                    This object should return attributes related to the time period and time aggregation over which a prediction is made
+                  required:
+                    - type
+                    - frequency
+                    - start
+                    - end
+                  properties:
+                    type:
+                      type: string
+                      description: model specific. can be forecast, historical_trend etc.
+                    frequency:
+                      type: string
+                      description: |-
+                        Can be:"daily","monthly","yearly","season","custom"..etc <br>
+                        <b> Note :</b> One date in the UTC date format can be passed if the frequency is "daily".
+                    start:
+                      type: date(UTC)
+                      description: |-
+                        example: 2023-02-07T10:41:24Z
+                    end:
+                      type: date(UTC)
+                      description: |-
+                        example: 2023-02-07T10:41:24Z
+
+                features:
+                  description: Feature objects gather values and attributes for the model outputs returned by the API
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - value
+                      - attributes
+                    properties:
+                      type:
+                        type: string
+                        description: |-
+                          Type is a descriptive label of the feature object <br>
+                           <b> geoJSON - only for imaginary models.</b>
+                      value:
+                        description: |-
+                          Value refers to the specific data point or content of information that is associated with a particular feature
+                        type: string
+                      unit:
+                        type: string
+                        description: When necessary, the unit of the value should be specified. (Model specific)
+                      model:
+                        description: |-
+                          A model object may be required in the case of multi-model systems to specify the type attributes of the model used to generate a specific feature value.<br>
+                          Example: regression, classification
+                        properties:
+                          name:
+                            type: string
+                            description: name of model.
+                          version:
+                            type: string
+                            description: version of model.
+                          type:
+                            type: string
+                          algorithm:
+                            type: array[math]
+
+                      attributes:
+                        type: object
+                        description: |-
+                          Feature specific characteristics. Must be in key value format.
+                        required:
+                          - key
+                          - value
+                        properties:
+                          key:
+                            type: string
+                          value:
+                            type: any
+
+                attributes:
+                  type: object
+                  description: |-
+                    High level characteristics referring to the whole model predictions object. Must be in key value format.
+                  required:
+                    - key
+                    - value
+                  properties:
+                    key:
+                      type: string
+                    value:
+                      type: any
+
+  example:
+    {
+      "response_version": "v1.0",
+      "results": [
+        {
+          "id": “cwp:base::field:id:2ee9a2deac13e1097ee6dabb67903e5f”,
+          "location": {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                7.952595,
+                47.544877
+              ] },
+            "properties": {
+              "country_code": "FR",
+              "grid_id": 49285035
+            }
+          },
+          "metadata": {
+            "type": "mathematical",
+            "model": "avizio",
+            "version": "v1.0",
+            "result_time": 1675858825
+          },
+          "predictions": [
+            {
+              "feature_category": "potential_yield_loss",
+              "features": [
+                {
+                  "type": "risk_level_by_disease",
+                  "value": 2.0,
+                  "unit": "index",
+                  "attributes": {
+                    "disease_code": "PUCCST"
+                  }
+                },
+                {
+                  "type": "max_by_plant_compartment",
+                  "value": 20.420188522029576,
+                  "unit": "quintal/hectare",
+                  "attributes": {
+                    "plant_compartment": "LEAF_ALL"
+                  }
+                }
+              ]
+            },
+            {
+              "feature_category": "disease_level_current_season_before_bbch30",
+              "features": [
+                {
+                  "type": "incidence_level_by_disease",
+                  "value": 0.0,
+                  "unit": "index",
+                  "attributes": {
+                    "disease_code": "PUCCRE"
+                  }
+                },
+                {
+                  "type": "incidence_level_by_disease",
+                  "value": 1.0,
+                  "unit": "index",
+                  "attributes": {
+                    "disease_code": "ERYSGR"
+                  }
+                }
+              ]
+            },
+            {
+              "feature_category": "disease_level_previous_season",
+              "features": [
+                {
+                  "type": "incidence_level_by_disease",
+                  "value": 3.0,
+                  "unit": "index",
+                  "attributes": {
+                    "disease_code": "SEPTTR"
+                  }
+                },
+                {
+                  "type": "incidence_level_by_disease",
+                  "value": 0.0,
+                  "unit": "index",
+                  "attributes": {
+                    "disease_code": "PSDCHA"
+                  }
+                }
+              ]
+
+            },
+            {
+              "feature_category": "daily_weather_features",
+              "prediction_window": {
+                "type": "forecast",
+                "frequency": "daily",
+                "date": "2021-10-18T00:00:00Z"
+              },
+              "features": [
+                {
+                  "type": "precipitation_sum",
+                  "value": 0.0,
+                  "unit": "mm"
+                },
+                {
+                  "type": "air_temperature_minimum",
+                  "value": 4.12,
+                  "unit": "degree Celsius"
+                },
+                {
+                  "type": "air_temperature_average",
+                  "value": 11.09,
+                  "unit": "degree Celsius"
+                }
+              ]
+            },
+            {
+              "feature_category": "daily_crop_stage",
+              "prediction_window": {
+                "type": "forecast",
+                "frequency": "daily",
+                "date": "2021-10-18T00:00:00Z"
+              },
+              "features": [
+                {
+                  "type": "avg_bbch_by_plot",
+                  "value": 0.0,
+                  "unit": "bbch"
+                }
+              ]
+            },
+            {
+              "feature_category": "daily_disease_risk",
+              "prediction_window": {
+                "type": "forecast",
+                "frequency": "daily",
+                "date": "2021-10-18T00:00:00Z"
+              },
+              "features": [
+                {
+                  "type": "max_disease_development_by_plant_compartment",
+                  "value": 0.0,
+                  "unit": "index",
+                  "attributes": {
+                    "plant_compartment": "LEAF5"
+                  }
+                },
+                {
+                  "type": "disease_development_by_plant_compartment",
+                  "value": 0.0,
+                  "unit": "index",
+                  "attributes": {
+                    "disease_code": "SEPTTR",
+                    "plant_compartment": "LEAF5"
+                  }
+                }
+              ]
+            },
+            {
+              "feature_category": "daily_plant_architecture",
+              "prediction_window": {
+                "type": "forecast",
+                "frequency": "daily",
+                "date": "2021-10-18T00:00:00Z"
+              },
+              "features": [
+                {
+                  "type": "height",
+                  "value": 0.0,
+                  "unit": "cm",
+                  "attributes": {
+                    "plant_compartment": "EAR"
+                  }
+                },
+                {
+                  "type": "development_ratio",
+                  "value": 0.0,
+                  "unit": "%",
+                  "attributes": {
+                    "plant_compartment": "EAR"
+                  }
+                }
+              ]
+            },
+            {
+              "feature_category": "daily_plant_architecture",
+              "features": [
+                {
+                  "type": "height",
+                  "unit": "cm",
+                  "value": 0,
+                  "attributes": {
+                    "plant_compartment": "EAR"
+                  }
+                }
+              ],
+              "prediction_window": {
+                "date": "2021-10-22T00:00:00Z",
+                "frequency": "daily",
+                "type": "forecast"
+              }
+            },
+            {
+              "feature_category": "daily_weather_features",
+              "features": [
+                {
+                  "type": "'windspeed_2m_above_ground",
+                  "unit": "meter/sec",
+                  "value": 1.88
+                } ],
+              "prediction_window": {
+                "date": "2021-10-22T00:00:00Z",
+                "frequency": "daily",
+                "type": "forecast"
+              }
+            },
+            {
+              "feature_category": "crop_stage",
+              "features": [
+                {
+                  "type": "avg_bbch_by_plot",
+                  "unit": "bbch",
+                  "value": 89.0,
+                  "attributes": {
+                    "plant_compartment": "PLOT",
+                    "number_of_days_after_planting": 240,
+                    "predicted_date": "2022-06-18T00:00:00Z"
+                  }
+                }
+              ]
+            },
+            {
+              "feature_category": "daily_recommendations",
+              "features": [
+                {
+                  "type": "message_ID",
+                  "value": 4
+                }
+              ],
+              "prediction_window": {
+                "date": "2022-06-18T00:00:00Z",
+                "frequency": "daily",
+                "type": "forecast"
+              }
+            }
+          ],
+          "attributes": {
+            "water_supply": {
+              "irrigations": [
+                {
+                  "date": "2020-03-29T00:00:00Z",
+                  "volume": {
+                    "value": 10,
+                    "unit": "mm"
+                  }
+                },
+                {
+                  "date": "2020-03-12T00:00:00Z",
+                  "volume": {
+                    "value": 100,
+                    "unit": "mm"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+
+Error400:
+  type: object
+  properties:
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          target:
+            type: string
+            description: The target of the error
+            example: geometry
+          type:
+            type: string
+            enum:
+              - invalid
+              - required
+              - already_exist
+              - unprocessable
+              - server_error
+            example: required
+          message:
+            type: string
+            description: message description
+            example: Required field geometry is missing
+          code:
+            type: string
+            description: |
+              <b>Error 400</b>: <b>A status code of 400 indicates that the server did not understand the request due to bad syntax or any invalid input or missing input field.</b> <br><br>
+              INS_IN_VAL_0001: Required field is missing <br><br>
+              INS_IN_VAL_0002:  Invalid input <br><br>
+              INS_IN_VAL_0003:  Model execution error <br><br>
+            example: INS_IN_VAL_0001
+
+Error401:
+  type: object
+  properties:
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          target:
+            type: string
+            description: The target of the error
+            example: type
+          type:
+            type: string
+            enum:
+              - unauthorized
+          message:
+            type: string
+            description: message description
+            example: Resource must be authorized by server
+          code:
+            type: string
+            description: |
+              <b>Error 401</b>: <b>The 401 Unauthorized status code means that the request has not been applied because the server requires user authentication.</b> <br><br>
+              INS_RQ_UNAUTHORIZED_0001: Unauthorized <br><br>
+            example: INS_RQ_UNAUTHORIZED_0001
+
+Error403:
+  type: object
+  properties:
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          target:
+            type: string
+            description: The target of the error
+            example: type
+          type:
+            type: string
+            enum:
+              - forbidden
+          message:
+            type: string
+            description: message description
+            example: You don't have permission to access on this server
+          code:
+            type: string
+            description: |
+              <b>Error 403</b>: <b>This status code means that the client request has been rejected because the client does not have rights to access the content.</b> <br><br>
+              INS_RQ_FORBIDDEN_0001 : Forbidden <br><br>
+            example: INS_RQ_FORBIDDEN_0001
+
+Error404:
+  type: object
+  properties:
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          target:
+            type: string
+            description: The target of the error
+            example: type
+          type:
+            type: string
+            enum:
+              - not_found
+          message:
+            type: string
+            description: message description
+            example: url not found
+          code:
+            type: string
+            description: |
+              <b>Error 404</b>: <b>The 404 status code means that the server either did not find a current representation for the requested resource or is trying to hide its existence from an unauthorized client.</b> <br><br>
+              INS_EV_NOT_FOUND_0001: URL not found <br><br>
+              INS_EV_NOT_FOUND_0002: Entity Not Found <br><br>
+            example: INS_EV_NOT_FOUND_0001
+
+Error500:
+  type: object
+  properties:
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          target:
+            type: string
+            description: The target of the error
+            example: server_error
+          type:
+            type: string
+            enum:
+              - server_error
+              - invalid
+              - required
+              - already_exist
+              - unprocessable
+            example: server_error
+          message:
+            type: string
+            description: message description
+            example: Weather data not available
+          code:
+            type: string
+            description: |
+              <b>Error 500</b>: <b> The 500 Internal Server Error status code means that the server has encountered a situation that it does not know how to handle.</b> <br><br>
+              INS_EV_SER_0001: Weather API down <br><br>
+              INS_EV_SER_0001: DocumentDB error <br><br>
+            example: INS_EV_SER_0001
+
+Error502:
+  type: object
+  properties:
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          target:
+            type: string
+            description: The target of the error
+            example: external.api.call
+          type:
+            type: string
+            enum:
+              - bad_gateway
+            example: bad_gateway
+          message:
+            type: string
+            description: message description
+            example: Cropwise API down
+          code:
+            type: string
+            description: |
+              <b>Error 502</b>: <b>This response code means that the server received an invalid response while working as a gateway to handle the response.</b> <br><br>
+              INS_EV_BAD_GATEWAY_0001: Cropwise API down <br><br>
+            example: INS_EV_BAD_GATEWAY_0001

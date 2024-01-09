@@ -1,0 +1,127 @@
+openapi: 3.0.3
+info:
+  title: Insights Engine API
+  version: v1.0.0
+  contact:
+    name: API Support
+    url: https://docs.api.insights.cropwise.com/
+  description: |-
+    
+    # Introduction
+    
+    A platform to deploy your machine learning models on Kubernetes at massive scale.
+     
+    It converts your ML models (Tensorflow, Pytorch, H2o, etc.) or language wrappers (Python, Java, etc.) into production REST/GRPC microservices.
+    
+    Handles scaling to thousands of production machine learning models and provides advanced machine learning capabilities out of the box including Advanced Metrics, Request Logging, Explainers, Outlier Detectors, A/B Tests, Canaries and more.
+    
+    # Authentication
+    ## To access the service, you will need:
+    An API Key, which you can request from Insights Engine Team. 
+    The same Insights Engine API key can be used to access any of the Insights Engine APIs
+
+
+servers:
+  - url: https://dev.com
+    description: DEV
+  - url: https://qa.com
+    description: QA
+  - url: https://api.com
+    description: PROD
+
+paths:
+  /v2.0/predictions:
+    $ref: 'request-response-standardization-v1/request-response.yaml#/Computational Agronomy'
+
+  # /fusion/predict:
+  #   $ref: 'cehub-v1/cehub.yaml#/CehubDiseaseRiskV1'
+
+  # /bydv/api/v1.0/predictions:
+  #   $ref: 'bydv-v1/bydv.yaml#/BYDVV1'
+  
+  # /phenological/api/v1.0/predictions:
+  #   $ref: 'pheno-v1/pheno.yaml#/PhenologicalV1'
+
+  # /phenological/api/v2.0/predictions:
+  #   $ref: 'pheno-v2/pheno.yaml#/PhenologicalV2'
+
+  # /fusion/lodging/api/v1.0/predictions:
+  #   $ref: 'lodging-v1/lodging.yaml#/FusionLodgingV1'
+
+  # /avizio/api/v1.0/predictions:
+  #   $ref: 'IADM/IADM.yaml#/avizio1.1'
+
+  # /gdd/api/v1.0/predictions:
+  #   $ref: 'gdd-v1/gdd.yaml#/GDDV1'
+
+  # /pre-compute/api/v1.0/batch/register:
+  #   $ref: 'pre-compute-batch-v1/batch.yaml#/PreComputeBatchRegisterV1'
+
+  # /pre-compute/api/v1.0/batch/{batch_id}/upload?replace=True:
+  #   $ref: 'pre-compute-batch-v1/batch.yaml#/PreComputeBatchUploadV1'
+
+  # /pre-compute/api/v1.0/batch/{batch_id}/download:
+  #   $ref: 'pre-compute-batch-v1/batch.yaml#/PreComputeBatchDownloadV1'
+
+  # /parameter-store/api/v1.0/parameters/upload:
+  #   $ref: 'parameter-store-v1/parameter.yaml#/ParameterStoreFileUploadV1'
+
+  # /parameter-store/api/v1.0/parameters:
+  #   $ref: 'parameter-store-v1/parameter.yaml#/ParameterStoreCrudV1'
+
+  # /parameter-store/api/v1.0/parameters/indexes:
+  #   $ref: 'parameter-store-v1/parameter.yaml#/ParameterStoreIndexesV1'
+
+  # /fusion/obo/api/v1.0/predictions:
+  #   $ref: 'obo-v1/obo.yaml#/FusionOBOV1'
+
+  # /aphid/api/v1.0/predictions:
+  #   $ref: 'aphid-v1/aphid.yaml#/AphidSinglePoint'
+
+  # /aphid/api/v1.0/predictions/multipoint:
+  #   $ref: 'aphid-v1/aphid.yaml#/AphidMultipoint'
+
+  # /dssat/v1.2/api/predictions:
+  #   $ref: 'dssatv1_2/dssat.yaml#/inseason' 
+  
+  # /dssat/v2.0/api/predictions:
+  #   $ref: 'dssat-v2/dssat.yaml#/inseason'
+
+  # /prescription-map/api/v1.0/predictions:
+  #   $ref: 'prescription-map-v1/prescription.yaml#/PrescriptionMapV1'
+
+  # /orchestration/dssat/v1.2/cgc/v1.0/predictions:
+  #   $ref: 'cgc-v1-0/cgc.yaml#/WeeklyRelativeCharacterization'
+
+  # /cloud-coverage/api/v1.0/predictions:
+  #   $ref: 'cloud-coverage-v1/cloud_coverage.yaml#/cloud-coverage'
+
+  # /api/v1.0/notifications:
+  #   $ref: 'Notification_service/notification_service.yaml#/Notification_service'
+
+  # /fusion/herbicide/api/v1.0/predictions:
+  #   $ref: 'sunflower-herbicide-v1.0/Herbicide.yaml#/sunflower-herbicide'
+
+
+  # /integration/hooks/field/cropwise-base/callback:
+  #   $ref: 'integration-service/integration_service.yaml#/IntegrationServiceV1'
+
+  # /fusion/broomrape/api/v1.0/predictions:
+  #   $ref: 'sunflower-broomrape-v1.0/Broomrape.yaml#/sunflower-broomrape'
+
+  # /fusion/downymildew/api/v1.0/predictions:
+  #   $ref: 'sunflower-downy-mildew-v1.0/Downy_mildew.yaml#/sunflower-downy-mildew'
+
+
+security:
+  - BearerAuth: [ ]
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: bearer token security
+ 
+        
